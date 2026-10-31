@@ -46,9 +46,16 @@ jobs:
             mesa-vulkan-drivers python3-pillow xorg-x11-server-Xvfb xset xz
           git config --global --add safe.directory "$(pwd)"
 
-      - uses: Swatinem/rust-cache@v2
+      - name: Cache Cargo registry and build output
+        uses: actions/cache@v4
         with:
-          workspaces: engine
+          path: |
+            /root/.cargo/registry
+            /root/.cargo/git
+            engine/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('engine/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
       - name: Clippy (warnings are errors)
         working-directory: engine
